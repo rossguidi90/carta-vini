@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carta dei Vini — Palinurobar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --ivory:#faf6f0;
+  --ivory2:#f3ede4;
+  --ivory3:#e8dfd3;
+  --warm:#c9a96e;
+  --warm2:#a8834a;
+  --warm3:#7a5c2e;
+  --ink:#2a1f14;
+  --ink2:#4a3728;
+  --ink3:#7a6655;
+  --ink4:#a89080;
+  --border:rgba(169,131,74,.25);
+  --border2:rgba(169,131,74,.12);
+  --red-w:rgba(139,60,60,.12);
+  --red-txt:#8b3c3c;
+  --white-w:rgba(180,160,100,.15);
+  --white-txt:#7a5c2e;
+  --rose-w:rgba(200,120,120,.1);
+  --rose-txt:#9e5050;
+  --sparkling-w:rgba(80,140,160,.1);
+  --sparkling-txt:#3a7a8c;
+  --natural-w:rgba(80,130,80,.1);
+  --natural-txt:#3a7040;
+  --sweet-w:rgba(140,80,160,.1);
+  --sweet-txt:#6a3880;
+  --other-w:rgba(160,120,60,.1);
+  --other-txt:#7a5c2e;
+}
+
+body{
+  background:var(--ivory);
+  color:var(--ink);
+  font-family:'Montserrat',sans-serif;
+  min-height:100vh;
+}
+
+/* ── HEADER ── */
+header{
+  background:var(--ivory);
+  border-bottom:1px solid var(--border);
+  padding:32px 20px 24px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:20;
+  backdrop-filter:blur(12px);
+  background:rgba(250,246,240,.94);
+}
+.header-ornament{
+  font-family:'Cormorant Garamond',serif;
+  font-size:11px;
+  letter-spacing:.4em;
+  text-transform:uppercase;
+  color:var(--ink4);
+  margin-bottom:10px;
+}
+header h1{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;
+  font-size:2.2rem;
+  color:var(--ink);
+  letter-spacing:.08em;
+  line-height:1.1;
+}
+header h1 em{
+  font-style:italic;
+  color:var(--warm2);
+}
+.header-subtitle{
+  font-size:10px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--ink4);
+  margin-top:8px;
+}
+.header-line{
+  width:40px;
+  height:1px;
+  background:var(--warm);
+  margin:14px auto;
+}
+
+/* ── FILTER TABS ── */
+.filter-section{
+  padding:0 16px 12px;
+  background:rgba(250,246,240,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border2);
+  position:sticky;
+  top:133px;
+  z-index:19;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.filter-section::-webkit-scrollbar{display:none}
+.filter-tabs{
+  display:flex;
+  gap:6px;
+  width:max-content;
+  padding:4px 0;
+}
+.ftab{
+  font-family:'Montserrat',sans-serif;
+  font-size:9px;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  padding:6px 14px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--ink3);
+  cursor:pointer;
+  border-radius:0;
+  transition:all .2s;
+  white-space:nowrap;
+}
+.ftab:hover{border-color:var(--warm2);color:var(--warm2)}
+.ftab.active{background:var(--warm2);border-color:var(--warm2);color:#fff}
+
+/* ── MAIN ── */
+main{
+  max-width:680px;
+  margin:0 auto;
+  padding:0 0 60px;
+}
+
+/* ── SECTION HEADER ── */
+.tipologia-section{
+  overflow:hidden;
+}
+.tipo-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 20px 14px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.tipo-header-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.tipo-dot{
+  width:10px;
+  height:10px;
+  flex-shrink:0;
+}
+.tipo-title{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:400;
+  font-size:1.25rem;
+  letter-spacing:.06em;
+  color:var(--ink);
+}
+.tipo-count{
+  font-size:9px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--ink4);
+  margin-top:2px;
+}
+.tipo-chevron{
+  font-size:12px;
+  color:var(--ink4);
+  transition:transform .25s;
+}
+.tipo-chevron.open{transform:rotate(180deg)}
+.tipo-body{
+  overflow:hidden;
+  transition:max-height .35s cubic-bezier(.4,0,.2,1);
+}
+.tipo-divider{
+  height:1px;
+  background:var(--border);
+  margin:0 20px;
+}
+
+/* ── WINE ROW ── */
+.wine-row{
+  padding:14px 20px;
+  border-bottom:1px solid var(--border2);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px 12px;
+  align-items:start;
+  transition:background .15s;
+}
+.wine-row:last-child{border-bottom:none}
+.wine-row:active{background:rgba(169,131,74,.06)}
+.wine-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;
+  font-weight:400;
+  color:var(--ink);
+  line-height:1.3;
+}
+.wine-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:4px;
+  flex-wrap:wrap;
+}
+.wine-produttore{
+  font-size:10px;
+  color:var(--ink3);
+  font-style:italic;
+}
+.wine-annata{
+  font-size:10px;
+  font-family:'Montserrat',sans-serif;
+  font-weight:500;
+  color:var(--warm2);
+  letter-spacing:.05em;
+}
+.wine-region{
+  font-size:9px;
+  color:var(--ink4);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.wine-prices{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  align-items:flex-end;
+  flex-shrink:0;
+}
+.price-bottiglia{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;
+  font-weight:500;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.price-calice{
+  font-size:10px;
+  color:var(--ink3);
+  white-space:nowrap;
+}
+.price-calice span{
+  color:var(--warm2);
+  font-weight:500;
+}
+.wine-note{
+  grid-column:1/-1;
+  font-size:10px;
+  color:var(--ink4);
+  font-style:italic;
+  line-height:1.5;
+  padding-top:2px;
+  border-top:1px dashed var(--border2);
+  margin-top:4px;
+  padding-top:6px;
+}
+
+/* ── EMPTY / LOADING ── */
+.state-wrap{
+  padding:64px 24px;
+  text-align:center;
+}
+.state-icon{
+  font-size:36px;
+  margin-bottom:16px;
+  opacity:.4;
+}
+.state-msg{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;
+  color:var(--ink3);
+  font-style:italic;
+}
+.state-sub{
+  font-size:10px;
+  color:var(--ink4);
+  margin-top:6px;
+  letter-spacing:.1em;
+}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;
+  padding:24px 20px;
+  border-top:1px solid var(--border);
+  margin-top:12px;
+}
+.footer-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1rem;
+  color:var(--ink3);
+  letter-spacing:.1em;
+}
+.footer-copy{
+  font-size:9px;
+  color:var(--ink4);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  margin-top:6px;
+}
+
+/* ── TIPO COLOR THEMES ── */
+.tipo-Rosso .tipo-dot{background:#8b3c3c}
+.tipo-Bianco .tipo-dot{background:#c9a96e}
+.tipo-Rosato .tipo-dot{background:#c97878}
+.tipo-Spumante .tipo-dot{background:#5a9aae}
+.tipo-Naturale .tipo-dot{background:#5a9050}
+.tipo-Dolce .tipo-dot{background:#8a60a0}
+.tipo-Passito .tipo-dot{background:#a06030}
+.tipo-Liquoroso .tipo-dot{background:#907030}
+.tipo-Orange .tipo-dot{background:#b07040}
+
+/* ── LOADING SHIMMER ── */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.shimmer{
+  background:linear-gradient(90deg,var(--ivory2) 25%,var(--ivory3) 50%,var(--ivory2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+}
+
+/* ── SCROLL TO TOP ── */
+#scroll-top{
+  position:fixed;
+  bottom:24px;
+  right:20px;
+  width:40px;
+  height:40px;
+  background:var(--warm2);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:50;
+}
+#scroll-top.visible{opacity:1;pointer-events:all}
+
+/* ── RESPONSIVE ── */
+@media(min-width:680px){
+  main{border-left:1px solid var(--border2);border-right:1px solid var(--border2)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-ornament">✦ Palinurobar ✦</div>
+  <h1><em>Carta dei Vini</em></h1>
+  <div class="header-line"></div>
+  <div class="header-subtitle">Selezione della casa</div>
+</header>
+
+<div class="filter-section" id="filter-section">
+  <div class="filter-tabs" id="filter-tabs">
+    <button class="ftab active" data-tipo="tutti" onclick="setFilter('tutti',this)">Tutti</button>
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<main id="main">
+  <div class="state-wrap">
+    <div class="state-icon">🍷</div>
+    <div class="state-msg shimmer" style="width:160px;height:20px;margin:0 auto;border-radius:2px"></div>
+    <div class="state-sub" style="margin-top:12px">Caricamento in corso…</div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-name">Palinurobar</div>
+  <div class="footer-copy">© <span id="footer-year"></span> — Carta aggiornata in tempo reale</div>
+</footer>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────────
+const SB_URL = "https://bsyrxntucnsceamikjsq.supabase.co";
+const SB_KEY = "sb_publishable_Togro6TTbNuV88NZkaadCA__pmh3-wx";
+const DB_USER = "default";
+
+const TIPOLOGIE_ORDER = ["Spumante","Bianco","Orange","Rosato","Rosso","Naturale","Dolce","Passito","Liquoroso"];
+const TIPO_LABELS = {
+  Rosso:"Rossi",Bianco:"Bianchi",Rosato:"Rosati",Spumante:"Spumanti",
+  Naturale:"Naturali",Dolce:"Dolci",Passito:"Passiti",Liquoroso:"Liquorosi",Orange:"Orange"
+};
+
+document.getElementById("footer-year").textContent = new Date().getFullYear();
+
+// ── SCROLL TO TOP ──────────────────────────────────────────────────────────────
+window.addEventListener("scroll",()=>{
+  document.getElementById("scroll-top").classList.toggle("visible", window.scrollY > 300);
+});
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let allWines = [];
+let currentFilter = "tutti";
+let openSections = new Set(); // tipologie espanse
+
+function setFilter(tipo, btn){
+  currentFilter = tipo;
+  document.querySelectorAll(".ftab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderWines();
+}
+
+// ── SUPABASE READ ──────────────────────────────────────────────────────────────
+async function loadWines(){
+  try{
+    const sb = supabase.createClient(SB_URL, SB_KEY);
+    const { data, error } = await sb.from("cm_wines").select("data").eq("user_id", DB_USER).single();
+    if(error) throw error;
+    allWines = (data?.data ?? []).filter(w => (w.giacenza||0) > 0);
+    buildFilters();
+    renderWines();
+  }catch(e){
+    document.getElementById("main").innerHTML = `
+      <div class="state-wrap">
+        <div class="state-icon">🥀</div>
+        <div class="state-msg">Carta temporaneamente non disponibile</div>
+        <div class="state-sub">Riprovare tra qualche istante</div>
+      </div>`;
+  }
+}
+
+// ── BUILD FILTER TABS ──────────────────────────────────────────────────────────
+function buildFilters(){
+  const tabs = document.getElementById("filter-tabs");
+  const present = [...new Set(allWines.map(w=>w.tipologia).filter(Boolean))];
+  const ordered = TIPOLOGIE_ORDER.filter(t=>present.includes(t));
+  tabs.innerHTML = `<button class="ftab active" data-tipo="tutti" onclick="setFilter('tutti',this)">Tutti</button>`;
+  ordered.forEach(t=>{
+    const btn = document.createElement("button");
+    btn.className = "ftab";
+    btn.dataset.tipo = t;
+    btn.textContent = TIPO_LABELS[t]||t;
+    btn.onclick = function(){ setFilter(t,this); };
+    tabs.appendChild(btn);
+  });
+}
+
+// ── FORMAT PRICE ──────────────────────────────────────────────────────────────
+const fmtEur = v => v ? new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR",minimumFractionDigits:0,maximumFractionDigits:2}).format(v) : null;
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderWines(){
+  const main = document.getElementById("main");
+
+  const filtered = currentFilter==="tutti"
+    ? allWines
+    : allWines.filter(w=>w.tipologia===currentFilter);
+
+  if(!filtered.length){
+    main.innerHTML = `<div class="state-wrap"><div class="state-icon">🍾</div><div class="state-msg">Nessun vino in questa categoria</div></div>`;
+    return;
+  }
+
+  // Group by tipologia
+  const groups = {};
+  TIPOLOGIE_ORDER.forEach(t=>{ groups[t]=[]; });
+  filtered.forEach(w=>{
+    const t = w.tipologia||"Altri";
+    if(!groups[t]) groups[t]=[];
+    groups[t].push(w);
+  });
+
+  const tipologie = TIPOLOGIE_ORDER.filter(t=>groups[t]?.length);
+  // Auto-open all sections when filter is "tutti", or the single section when filtered
+  if(currentFilter !== "tutti"){
+    openSections = new Set(tipologie);
+  } else if(openSections.size === 0){
+    openSections = new Set(tipologie);
+  }
+
+  let html = "";
+  tipologie.forEach(tipo=>{
+    const wines = groups[tipo];
+    const isOpen = openSections.has(tipo);
+    const label = TIPO_LABELS[tipo]||tipo;
+
+    html += `<div class="tipologia-section tipo-${tipo}" id="section-${tipo}">
+      <div class="tipo-header" onclick="toggleSection('${tipo}')">
+        <div class="tipo-header-left">
+          <div class="tipo-dot"></div>
+          <div>
+            <div class="tipo-title">${label}</div>
+            <div class="tipo-count">${wines.length} referenz${wines.length===1?"a":"e"}</div>
+          </div>
+        </div>
+        <div class="tipo-chevron ${isOpen?"open":""}" id="chev-${tipo}">▾</div>
+      </div>
+      <div class="tipo-body" id="body-${tipo}" style="max-height:${isOpen?'9999px':'0'}">
+        <div class="tipo-divider"></div>
+        ${wines.sort((a,b)=>(a.produttore||"").localeCompare(b.produttore||"")).map(w => wineRow(w)).join("")}
+      </div>
+    </div>`;
+  });
+
+  main.innerHTML = html;
+}
+
+function toggleSection(tipo){
+  const body = document.getElementById("body-"+tipo);
+  const chev = document.getElementById("chev-"+tipo);
+  if(openSections.has(tipo)){
+    openSections.delete(tipo);
+    body.style.maxHeight = "0";
+    chev.classList.remove("open");
+  } else {
+    openSections.add(tipo);
+    body.style.maxHeight = "9999px";
+    chev.classList.add("open");
+  }
+}
+
+function wineRow(w){
+  const bottiglia = fmtEur(w.prezzoCarta);
+  const calice = fmtEur(w.prezzoCalice);
+  const annata = w.annata && w.annata !== "N.V." ? w.annata : (w.annata==="N.V."?"N.V.":"");
+  const note = w.noteVeloce || w.note || "";
+
+  return `<div class="wine-row">
+    <div>
+      <div class="wine-name">${esc(w.nome||"")}</div>
+      <div class="wine-meta">
+        ${w.produttore?`<span class="wine-produttore">${esc(w.produttore)}</span>`:""}
+        ${annata?`<span class="wine-annata">${esc(annata)}</span>`:""}
+        ${w.regione?`<span class="wine-region">${esc(w.regione)}</span>`:""}
+      </div>
+      ${note?`<div class="wine-note">${esc(note)}</div>`:""}
+    </div>
+    <div class="wine-prices">
+      ${bottiglia?`<div class="price-bottiglia">${bottiglia}</div>`:`<div class="price-bottiglia" style="color:var(--ink4)">—</div>`}
+      ${calice?`<div class="price-calice">calice <span>${calice}</span></div>`:""}
+    </div>
+  </div>`;
+}
+
+function esc(s){ return String(s??'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") }
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadWines();
+</script>
+</body>
+</html>
