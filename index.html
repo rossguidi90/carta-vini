@@ -236,6 +236,32 @@ main{
   letter-spacing:.1em;
   text-transform:uppercase;
 }
+.wine-details{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:3px;
+  flex-wrap:wrap;
+}
+.wine-zona{
+  font-size:9px;
+  color:var(--warm3);
+  font-style:italic;
+}
+.wine-vitigni{
+  font-size:9px;
+  color:var(--ink3);
+  letter-spacing:.03em;
+}
+.wine-nazione{
+  font-size:9px;
+  color:var(--ink4);
+  letter-spacing:.08em;
+}
+.wine-sep{
+  font-size:8px;
+  color:var(--border);
+}
 .wine-prices{
   text-align:right;
   display:flex;
@@ -539,6 +565,12 @@ function wineRow(w){
   const calice = fmtEur(w.prezzoCalice);
   const annata = w.annata && w.annata !== "N.V." ? w.annata : (w.annata==="N.V."?"N.V.":"");
   const note = w.noteVeloce || w.note || "";
+  const detailParts = [
+    w.nazione && w.nazione !== "Italia" ? `<span class="wine-nazione">${esc(w.nazione)}</span>` : "",
+    w.regione ? `<span class="wine-region">${esc(w.regione)}</span>` : "",
+    w.zona    ? `<span class="wine-zona">${esc(w.zona)}</span>` : "",
+    w.vitigni ? `<span class="wine-vitigni">${esc(w.vitigni)}</span>` : "",
+  ].filter(Boolean).join('<span class="wine-sep">·</span>');
 
   return `<div class="wine-row">
     <div>
@@ -546,8 +578,8 @@ function wineRow(w){
       <div class="wine-meta">
         ${w.produttore?`<span class="wine-produttore">${esc(w.produttore)}</span>`:""}
         ${annata?`<span class="wine-annata">${esc(annata)}</span>`:""}
-        ${w.regione?`<span class="wine-region">${esc(w.regione)}</span>`:""}
       </div>
+      ${detailParts?`<div class="wine-details">${detailParts}</div>`:""}
       ${note?`<div class="wine-note">${esc(note)}</div>`:""}
     </div>
     <div class="wine-prices">
